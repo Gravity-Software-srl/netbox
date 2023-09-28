@@ -1,6 +1,7 @@
 import decimal
 import re
 from datetime import datetime, date
+import dateutil.parser
 
 import django_filters
 from django import forms
@@ -355,12 +356,12 @@ class CustomField(CloningMixin, ExportTemplatesMixin, ChangeLoggedModel):
             return value
         if self.type == CustomFieldTypeChoices.TYPE_DATE:
             try:
-                return date.fromisoformat(value)
+                return dateutil.parser.parse(value)
             except ValueError:
                 return value
         if self.type == CustomFieldTypeChoices.TYPE_DATETIME:
             try:
-                return datetime.fromisoformat(value)
+                return dateutil.parser.parse(value)
             except ValueError:
                 return value
         if self.type == CustomFieldTypeChoices.TYPE_OBJECT:
@@ -627,7 +628,7 @@ class CustomField(CloningMixin, ExportTemplatesMixin, ChangeLoggedModel):
             elif self.type == CustomFieldTypeChoices.TYPE_DATE:
                 if type(value) is not date:
                     try:
-                        date.fromisoformat(value)
+                        dateutil.parser.parse(value)
                     except ValueError:
                         raise ValidationError(_("Date values must be in ISO 8601 format (YYYY-MM-DD)."))
 
@@ -635,7 +636,7 @@ class CustomField(CloningMixin, ExportTemplatesMixin, ChangeLoggedModel):
             elif self.type == CustomFieldTypeChoices.TYPE_DATETIME:
                 if type(value) is not datetime:
                     try:
-                        datetime.fromisoformat(value)
+                        dateutil.parser.parse(value)
                     except ValueError:
                         raise ValidationError(
                             _("Date and time values must be in ISO 8601 format (YYYY-MM-DD HH:MM:SS).")
